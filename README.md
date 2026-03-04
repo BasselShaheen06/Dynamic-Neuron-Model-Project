@@ -65,6 +65,7 @@ python simulate_rk2.py
 # Train the PINN model
 cd ../DL_PINN_model
 python train_pinn.py
+```
 
 👨‍💻 Contributors
 Developed by Bassel Shaheen, Mohamed Badawy, Kareem Taha, Engy Wael, Alaa Essam, Amat Al-Rahman, Ahmed Salem, Karim Hassan, Omar Gamal, Omar Amein, Ahmed AbdelMoety
