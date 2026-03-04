@@ -1,81 +1,72 @@
-# 🧠 Dynamic Neuron Model Project
+# Izhikevich Neuron Simulation: Numerical & PINN Solvers
+### Biomedical Engineering | Numerical Analysis | Physics-Informed Deep Learning
 
-This repository provides multiple numerical and deep learning approaches for solving the **Izhikevich neuron model** — a well-known system of two ordinary differential equations (ODEs) that simulate spiking neuron behavior efficiently.
+This repository implements and evaluates multiple computational approaches to solving the **Izhikevich model**, a system of two non-linear Ordinary Differential Equations (ODEs) that simulate spiking neuron behavior. We compare classical numerical integration against **Physics-Informed Neural Networks (PINNs)** to analyze stability, accuracy, and computational performance.
 
-## 📚 About the Izhikevich Model
+---
 
-The Izhikevich model is a biologically plausible spiking neuron model defined by the following two ODEs:
+## 🔬 Mathematical Framework
+The model approximates neural excitability through two coupled equations:
 
-dv/dt = 0.04v² + 5v + 140 - u + I
-du/dt = a(bv - u)
+$$\frac{dv}{dt} = 0.04v^2 + 5v + 140 - u + I$$
+$$\frac{du}{dt} = a(bv - u)$$
 
-Where:
-- `v` is the membrane potential of the neuron
-- `u` is a membrane recovery variable
-- `a`, `b`, `c`, and `d` are model parameters
-- `I` is the synaptic input current
+Where **$v$** represents membrane potential and **$u$** represents the recovery variable. Upon reaching the peak threshold ($v \geq 30$ mV), the variables are reset: $v \leftarrow c$ and $u \leftarrow u + d$.
 
-This model combines the biological plausibility of Hodgkin-Huxley-type models with the computational efficiency of integrate-and-fire models.
+### Solvers & Methodology
+We evaluated five distinct methods to address the system's non-linearity:
 
-## 📁 Repository Contents
+* **Midpoint Runge-Kutta (RK2):** Our primary benchmark; it provided the best balance of local truncation error and processing speed.
+* **Explicit & Backward Euler:** Used to analyze the trade-off between computational simplicity and numerical stability in "stiff" regions.
+* **ExpRESS-Euler:** An exponential integrator specifically implemented to handle sharp biological transitions.
+* **PINNs (Physics-Informed Neural Networks):** A deep learning approach using **PyTorch** where the loss function is constrained by the ODE residuals, allowing the model to learn the physics of the neuron without traditional time-stepping.
 
-| File / Folder                        | Description |
-|-------------------------------------|-------------|
-| `Explicit_Euler_method/`            | Solves the Izhikevich model using the Explicit Euler method. |
-| `Backward_Euler_method.py`          | A more stable integration using the Backward Euler method. |
-| `Midpoint_(RK2)_method/`            | Implements the Midpoint (RK2) method. |
-| `adaptive_exponential_Rosenbrock/`  | Advanced stiff solver using exponential Rosenbrock method. |
-| `DL_PINN_model/`                    | Uses Physics-Informed Neural Networks (PINNs) to approximate the dynamics of the Izhikevich model. |
-| `unity/`                            | (Optional) Unity files for visualization or interaction. |
+---
 
-## 🎯 Goals
+## 📈 Benchmarking Results
+Based on the results detailed in the [Technical Report](DNM_Report.pdf):
 
-- Explore different numerical integration methods for simulating Izhikevich neurons
-- Compare solver stability, accuracy, and performance
-- Introduce deep learning (PINNs) as an alternative solver
-- Offer a clear structure for neuroscience or computational modeling projects
+* **Numerical Stability:** While Implicit methods (Backward Euler) showed superior stability, they struggled to capture the sharp, discontinuous resets characteristic of the Izhikevich model.
+* **PINN Performance:** The neural network successfully captured recovery dynamics ($u$), but showed a "smoothing" effect on high-frequency voltage peaks ($v$) compared to RK2.
+* **Real-time Visualization:** An interactive **Unity** interface was developed to allow for live parameter tuning ($a, b, c, d$), enabling immediate observation of transitions between spiking regimes (e.g., Tonic Spiking vs. Chattering).
 
-## 🚀 Getting Started
 
+
+---
+
+## 📁 Repository Structure
+| Module | Contents |
+| :--- | :--- |
+| `Explicit_Euler_method/` | Implementation of baseline explicit integration. |
+| `Backward_Euler_method.py` | Robust implicit solver for stable integration. |
+| `Midpoint_(RK2)_method/` | Second-order Runge-Kutta implementation. |
+| `adaptive_exponential/` | Advanced stiff solver (Rosenbrock method). |
+| `DL_PINN_model/` | PyTorch implementation of the Physics-Informed model. |
+| `unity/` | C# scripts and assets for the 3D interactive viewer. |
+
+---
+
+## 🚀 Execution
 ### Requirements
+* Python 3.8+
+* `numpy`, `torch`, `matplotlib`, `scipy`
+* Unity (for interactive visuals)
 
-- Python 3.8+
-- Required packages: `numpy`, `matplotlib`, `torch`, `scipy`
-- Jupyter Notebook (optional)
-- Unity (optional, for interactive visuals)
-
-### Example Run
-
-# Clone the repo
-git clone https://github.com/MohamedBadawy19/Dynamic-Neuron-Model-Project.git
+### Running Solvers
+```bash
+# Clone the repository
+git clone [https://github.com/MohamedBadawy19/Dynamic-Neuron-Model-Project.git](https://github.com/MohamedBadawy19/Dynamic-Neuron-Model-Project.git)
 cd Dynamic-Neuron-Model-Project
 
-# Run a method (example: Explicit Euler)
-cd Explicit_Euler_method
-python simulate_explicit_euler.py
+# Run a numerical method (Example: RK2)
+cd "Midpoint_(RK2)_method"
+python simulate_rk2.py
 
-Run the PINN (Physics-Informed Neural Network)
-
-cd DL_PINN_model
+# Train the PINN model
+cd ../DL_PINN_model
 python train_pinn.py
 
-📊 Output
-
-Each method generates output graphs such as:
-
-Membrane potential v over time
-
-Recovery variable u over time
-
-Raster plots of spiking neuron activity (optional)
-
-
-These help analyze the model's behavior and compare between solvers.
-
 👨‍💻 Contributors
+Developed by Bassel Shaheen, Mohamed Badawy, Kareem Taha, Engy Wael, Alaa Essam, Amat Al-Rahman, Ahmed Salem, Karim Hassan, Omar Gamal, Omar Amein, Ahmed AbdelMoety
 
-This is a collaborative educational project developed by Mohamed Badawy and contributors. See the GitHub contributors section for full credit.
-
-📄 License
-
-This project is licensed under the MIT License. You are free to use, modify, and share it with proper attribution.
+📄 License: This project is licensed under the MIT License.
